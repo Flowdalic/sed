@@ -258,6 +258,9 @@ extern bool sandbox;
 /* If set, print debugging information.  */
 extern bool debug;
 
+/* if set, return an error code if the input was not mutated */
+extern bool error_if_unmodified;
+
 #define MBRTOWC(pwc, s, n, ps) \
   (mb_cur_max == 1 ? \
    (*(pwc) = btowc (*(unsigned char *) (s)), 1) : \

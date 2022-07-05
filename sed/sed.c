@@ -64,6 +64,9 @@ bool sandbox = false;
 /* if set, print debugging information */
 bool debug = false;
 
+/* if set, return an error code if the input was not mutated */
+bool error_if_unmodified = false;
+
 /* How do we edit files in-place? (we don't if NULL) */
 char *in_place_extension = NULL;
 
@@ -166,6 +169,8 @@ Usage: %s [OPTION]... {script-only-if-no-other-script} [input-file]...\n\
                  continuous long stream.\n"));
   fprintf (out, _("      --sandbox\n\
                  operate in sandbox mode (disable e/r/w commands).\n"));
+  fprintf (out, _("      --error-if-unmodified\n\
+                 exit with an error code if input was not modified.\n"));
   fprintf (out, _("  -u, --unbuffered\n\
                  load minimal amounts of data from the input files and flush\n\
                  the output buffers more often\n"));
@@ -191,7 +196,8 @@ main (int argc, char **argv)
 #define SHORTOPTS "bsnrzuEe:f:l:i::V:"
 
   enum { SANDBOX_OPTION = CHAR_MAX+1,
-         DEBUG_OPTION
+         DEBUG_OPTION,
+         ERROR_IF_UNMODIFIED_OPTION,
     };
 
   static const struct option longopts[] = {
@@ -208,6 +214,7 @@ main (int argc, char **argv)
     {"posix", 0, NULL, 'p'},
     {"silent", 0, NULL, 'n'},
     {"sandbox", 0, NULL, SANDBOX_OPTION},
+    {"error-if-unmodified", 0, NULL, ERROR_IF_UNMODIFIED_OPTION},
     {"separate", 0, NULL, 's'},
     {"unbuffered", 0, NULL, 'u'},
     {"version", 0, NULL, 'v'},
@@ -330,6 +337,10 @@ main (int argc, char **argv)
 
         case DEBUG_OPTION:
           debug = true;
+          break;
+
+        case ERROR_IF_UNMODIFIED_OPTION:
+          error_if_unmodified = true;
           break;
 
         case 'u':

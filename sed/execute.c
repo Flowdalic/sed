@@ -104,6 +104,9 @@ struct input {
 /* Have we done any replacements lately?  This is used by the `t' command. */
 static bool replaced = false;
 
+/* Was the input ever modified? */
+static bool modified = false;
+
 /* The current output file (stdout if -i is not being used).  */
 static struct output output_file;
 
@@ -1045,7 +1048,7 @@ do_subst (struct subst *sub)
       if (regs.start[0] == 0 && !sub->global)
         {
           /* We found a match, set the `replaced' flag. */
-          replaced = true;
+          replaced = modified = true;
 
           line.active += regs.end[0];
           line.length -= regs.end[0];
@@ -1055,7 +1058,7 @@ do_subst (struct subst *sub)
       else if (regs.end[0] == line.length)
         {
           /* We found a match, set the `replaced' flag. */
-          replaced = true;
+          replaced = modified = true;
 
           line.length = regs.start[0];
           goto post_subst;
@@ -1087,7 +1090,7 @@ do_subst (struct subst *sub)
           && ++count >= sub->numb)
         {
           /* We found a match, set the `replaced' flag. */
-          replaced = true;
+          replaced = modified = true;
 
           /* Now expand the replacement string into the output string. */
           append_replacement (&s_accum, sub->replacement, &regs);
@@ -1710,6 +1713,9 @@ process_files (struct vector *the_program, char **argv)
 
   if (input.bad_count)
     status = EXIT_BAD_INPUT;
+
+  if (status == EXIT_SUCCESS && error_if_unmodified && !modified)
+	  status = EXIT_UNMODIFIED;
 
   return status;
 }

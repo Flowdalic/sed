@@ -29,6 +29,8 @@ GNU sed NEWS                                    -*- outline -*-
   The 'r' command now accepts address 0, allowing inserting a file before
   the first line.
 
+  New option, --error-if-unmodified flag. If enabled, sed will return
+  with an exit status of 8 if the input was not modified.
 
 * Noteworthy changes in release 4.8 (2020-01-14) [stable]
 
